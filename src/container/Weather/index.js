@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { useNotification } from 'hooks'
+import { useNotification, useWeather } from 'hooks'
 
 function Weather() {
   const [userLocation, setUserLocation] = useState(null)
 
   const { notification } = useNotification()
+  const {} = useWeather({
+    latitude: userLocation?.coords?.latitude,
+    longitude: userLocation?.coords?.longitude
+  })
 
-  console.log(notification)
+  console.log(userLocation)
 
   useEffect(() => {
     verifyPermitionGeolocation()
