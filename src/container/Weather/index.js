@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { useNotification, useWeather } from 'hooks'
+import { Wrapper } from './styles'
+import DetailDay from 'components/DetailDay'
 
 function Weather() {
   const [userLocation, setUserLocation] = useState(null)
-
   const { notification } = useNotification()
-  const {} = useWeather({
+
+  const [{ data, refetch }] = useWeather({
     latitude: userLocation?.coords?.latitude,
     longitude: userLocation?.coords?.longitude
   })
-
-  console.log(userLocation)
 
   useEffect(() => {
     verifyPermitionGeolocation()
@@ -32,7 +32,6 @@ function Weather() {
   const verifyPermitionGeolocation = () => {
     if ('geolocation' in navigator) {
       navigator.permissions.query({ name: 'geolocation' }).then((result) => {
-        console.log(result)
         if (result.state === 'granted') {
           getLatAndLng()
         } else if (result.state === 'prompt') {
@@ -51,7 +50,14 @@ function Weather() {
     }
   }
 
-  return <div>Teste</div>
+  console.log(data)
+  return (
+    <Wrapper>
+      {data?.daily.map((item) => (
+        <DetailDay key={item.dt} item={item} />
+      ))}
+    </Wrapper>
+  )
 }
 
 export default Weather

@@ -3,7 +3,7 @@ import { useAxios } from 'hooks'
 const useWeather = ({ latitude, longitude }) => {
   const [{ data, loading, error }, refetch] = useAxios(
     {
-      url: `/onecall?lat=${latitude}&lon=${longitude}&cnt=5&appid=9dc8f187f74251533665423fe40a1ba7`
+      url: `/onecall?lat=${latitude}&lon=${longitude}&cnt=7&appid=9dc8f187f74251533665423fe40a1ba7`
     },
     {
       useCache: false
@@ -12,7 +12,7 @@ const useWeather = ({ latitude, longitude }) => {
 
   return [
     {
-      data,
+      data: data,
       refetch
     }
   ]
