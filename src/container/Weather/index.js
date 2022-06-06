@@ -1,13 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { useNotification, useWeather } from 'hooks'
+import { useCity, useNotification, useWeather } from 'hooks'
+
 import { Wrapper } from './styles'
 import DetailDay from 'components/DetailDay'
+import DetailToday from 'components/DetailToday'
+import { Box, CircularProgress } from '@mui/material'
 
 function Weather() {
   const [userLocation, setUserLocation] = useState(null)
   const { notification } = useNotification()
 
-  const [{ data, refetch }] = useWeather({
+  const [{ data, loading, refetch }] = useWeather({
+    latitude: userLocation?.coords?.latitude,
+    longitude: userLocation?.coords?.longitude
+  })
+
+  const [{ city }] = useCity({
     latitude: userLocation?.coords?.latitude,
     longitude: userLocation?.coords?.longitude
   })
@@ -50,13 +58,26 @@ function Weather() {
     }
   }
 
-  console.log(data)
   return (
-    <Wrapper>
-      {data?.daily.map((item) => (
-        <DetailDay key={item.dt} item={item} />
-      ))}
-    </Wrapper>
+    <Box display='flex' flexDirection='column'>
+      {
+        loading ? (
+          <Box width='100%' height='90vh' display='flex' alignItems='center' justifyContent='center'>
+            <CircularProgress style={{ color: '#fff' }} />
+          </Box>
+        ) : (
+          <>
+            <DetailToday city={city} weather={data?.current} refetch={refetch} />
+            <Wrapper>
+              {data?.daily?.map((item) => (
+                <DetailDay key={item.dt} item={item} />
+              ))}
+            </Wrapper>
+          </>
+        )
+      }
+
+    </Box>
   )
 }
 
