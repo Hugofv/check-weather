@@ -4,6 +4,9 @@
 
 `npm install` or `yarn install`
 
+## Add Enviroment
+ - Create file `.env` and add the variable `REACT_APP_APP_KEY_OPEN_WEATHER`, that it's `APP_KEY` from the open weather.
+
 ## Start Application
 
 `npm start` or `yarn start`

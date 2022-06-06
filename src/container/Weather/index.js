@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useCity, useNotification, useWeather } from 'hooks'
 
-import { Wrapper } from './styles'
 import DetailDay from 'components/DetailDay'
 import DetailToday from 'components/DetailToday'
 import { Box, CircularProgress } from '@mui/material'
+import { Wrapper, WrapperNotLocation } from './styles'
+import { MyLocation } from '@mui/icons-material'
 
 function Weather() {
   const [userLocation, setUserLocation] = useState(null)
+  const [locationPermitted, setLocationPermitted] = useState(false)
   const { notification } = useNotification()
 
   const [{ data, loading, refetch }] = useWeather({
@@ -41,6 +43,7 @@ function Weather() {
     if ('geolocation' in navigator) {
       navigator.permissions.query({ name: 'geolocation' }).then((result) => {
         if (result.state === 'granted') {
+          setLocationPermitted(true)
           getLatAndLng()
         } else if (result.state === 'prompt') {
           navigator.geolocation.getCurrentPosition(getLatAndLng, () => {
@@ -58,25 +61,46 @@ function Weather() {
     }
   }
 
+  if (!locationPermitted) {
+    return (
+      <Box
+        width='100%'
+        height='90vh'
+        display='flex'
+        alignItems='center'
+        justifyContent='center'
+      >
+        <WrapperNotLocation>
+          <MyLocation fontSize='large' />
+          Não foi possível obter sua localização, Verifique se a localização
+          está ativada
+        </WrapperNotLocation>
+      </Box>
+    )
+  }
+
   return (
     <Box display='flex' flexDirection='column'>
-      {
-        loading ? (
-          <Box width='100%' height='90vh' display='flex' alignItems='center' justifyContent='center'>
-            <CircularProgress style={{ color: '#fff' }} />
-          </Box>
-        ) : (
-          <>
-            <DetailToday city={city} weather={data?.current} refetch={refetch} />
-            <Wrapper>
-              {data?.daily?.map((item) => (
-                <DetailDay key={item.dt} item={item} />
-              ))}
-            </Wrapper>
-          </>
-        )
-      }
-
+      {loading ? (
+        <Box
+          width='100%'
+          height='90vh'
+          display='flex'
+          alignItems='center'
+          justifyContent='center'
+        >
+          <CircularProgress style={{ color: '#fff' }} />
+        </Box>
+      ) : (
+        <>
+          <DetailToday city={city} weather={data?.current} refetch={refetch} />
+          <Wrapper>
+            {data?.daily?.map((item) => (
+              <DetailDay key={item.dt} item={item} />
+            ))}
+          </Wrapper>
+        </>
+      )}
     </Box>
   )
 }
